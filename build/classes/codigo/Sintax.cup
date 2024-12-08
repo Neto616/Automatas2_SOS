@@ -1,0 +1,107 @@
+package codigo;
+
+import java_cup.runtime.Symbol;
+
+parser code
+{:
+    // Declaración de precedencias dentro del código del parser
+ /*   precedence left suma, resta;
+    precedence left producto, division;
+    precedence left y, o;*/
+
+    private Symbol s;
+    
+    public void syntax_error(Symbol s){
+        this.s = s;
+    }
+
+    public Symbol getS(){
+        return this.s;
+    }
+:};
+
+// Declaración de terminales
+terminal entero, decimal, string, bool,
+    igual, suma, resta, division, producto,
+    menorQue, mayorQue, menorIgual, mayorIgual,
+    y, o, no, igualA, diferenteA, verdadero, falso,
+    finLinea, imprimir, comillaSimple, comillaDoble,
+    parentesisA, parentesisC, llaveA, llaveC, funcMain,
+    si, sino, letra, numero, numeroDecimal, tipoStr, mientras;
+
+// No terminales
+non terminal INICIO, CODIGO, ID, IMPRIMIR, SENTENCIA, 
+OPERACIONES, OPERANDO, DECISION, SENTENCIA_BOOLEANA,
+MIENTRAS, DATO_NUMERICO, DATO_BOOLEANO;
+
+// Punto de partida
+start with INICIO;
+
+// Regla inicial
+INICIO ::= funcMain parentesisA parentesisC llaveA CODIGO llaveC;
+
+// Cuerpo del código
+CODIGO ::= SENTENCIA finLinea CODIGO
+         | IMPRIMIR CODIGO
+         | MIENTRAS CODIGO
+         | DECISION CODIGO
+         | /* vacío */;
+
+// Tipos
+DATO_NUMERICO ::= numero
+                | numeroDecimal;
+DATO_BOOLEANO ::= verdadero
+               | falso;
+
+// ID
+ID ::= letra;
+
+// Imprimir
+IMPRIMIR ::= imprimir parentesisA ID parentesisC finLinea
+          | imprimir parentesisA DATO_NUMERICO parentesisC finLinea
+          | imprimir parentesisA tipoStr parentesisC finLinea
+          | imprimir parentesisA OPERACIONES parentesisC finLinea;
+
+// Definición de sentencias
+SENTENCIA ::= entero ID igual numero
+            | decimal ID igual numeroDecimal
+            | string ID igual tipoStr
+            | bool ID igual DATO_BOOLEANO;
+
+// Operaciones
+OPERACIONES ::= ID OPERANDO
+              | DATO_NUMERICO OPERANDO
+              | /* na */;
+// Operando
+OPERANDO ::= suma ID OPERANDO
+          | suma DATO_NUMERICO OPERANDO
+          | resta ID OPERANDO
+          | resta DATO_NUMERICO OPERANDO
+          | division ID OPERANDO
+          | division DATO_NUMERICO OPERANDO
+          | producto ID OPERANDO
+          | producto DATO_NUMERICO OPERANDO
+          | suma parentesisA OPERACIONES parentesisC OPERANDO
+          | resta parentesisA OPERACIONES parentesisC OPERANDO
+          | division parentesisA OPERACIONES parentesisC OPERANDO
+          | producto parentesisA OPERACIONES parentesisC OPERANDO
+          | parentesisA OPERACIONES parentesisC OPERANDO
+          | finLinea;
+
+// Decisiones
+DECISION ::= si parentesisA SENTENCIA_BOOLEANA parentesisC llaveA CODIGO llaveC
+          | sino llaveA CODIGO llaveC;
+
+// Expresiones booleanas
+SENTENCIA_BOOLEANA ::= DATO_BOOLEANO
+                    | DATO_NUMERICO mayorQue DATO_NUMERICO
+                    | DATO_NUMERICO menorQue DATO_NUMERICO
+                    | DATO_NUMERICO menorIgual DATO_NUMERICO
+                    | DATO_NUMERICO mayorIgual DATO_NUMERICO
+                    | tipoStr igualA tipoStr
+                    | DATO_NUMERICO igualA DATO_NUMERICO
+                    | tipoStr diferenteA tipoStr
+                    | DATO_NUMERICO diferenteA DATO_NUMERICO;
+
+// Ciclos
+MIENTRAS ::= mientras parentesisA SENTENCIA_BOOLEANA parentesisC llaveA CODIGO llaveC;
