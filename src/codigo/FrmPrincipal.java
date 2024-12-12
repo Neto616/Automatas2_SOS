@@ -6,23 +6,18 @@ package codigo;
 
 import static codigo.Tokens.mayorIgual;
 import static codigo.Tokens.numero;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Reader;
 import java.io.StringReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java_cup.runtime.Symbol;
 import javax.swing.JFileChooser;
 import codigo.SemanticAnalyzer;
 import codigo.Sintax;
+import java.awt.Color;
 
 /**
  *
@@ -280,16 +275,23 @@ public class FrmPrincipal extends javax.swing.JFrame {
         String ST = txtArchivoContenido.getText();
         LexerCup lexerCup = new codigo.LexerCup(new StringReader(ST));
         Sintax s = new Sintax(lexerCup);
+        Semantica sem = new Semantica();
         try {
-            s.parse();    
+            s.parse(); 
+            s.setSemantica(sem);
+            
             txtAnalizarSin.setText("Análisis sintáctico y semántico correcto");
             jTextAreaTablaSimbolos.setText(semanticAnalyzer.getSymbolTable());
-           semanticAnalyzer = new SemanticAnalyzer(); // Reiniciar el analizador semántico 
+            semanticAnalyzer = new SemanticAnalyzer(); // Reiniciar el analizador semántico 
             
-        } catch (Exception ex) {
+        } catch(ErrorSemantica err) {
+            txtAnalizarSin.setText("Error Semántico: " + err.getMessage());
+            txtAnalizarSin.setForeground(Color.red);
+        }
+        catch (Exception ex) {
             Symbol sym = s.getS();
-//            semanticAnalyzer = new SemanticAnalyzer();
-//            txtAnalizarSin.setText("Error de sintaxis. Línea: " + (sym.right + 1) + " columna: " + (sym.left + 1) + " , Texto: \"" + sym.value + "\"");
+            semanticAnalyzer = new SemanticAnalyzer();
+            txtAnalizarSin.setText("Error de sintaxis. Línea: " + (sym.right + 1) + " columna: " + (sym.left + 1) + " , Texto: \"" + sym.value + "\"");
         }
     }//GEN-LAST:event_btnAnalizarSinActionPerformed
 

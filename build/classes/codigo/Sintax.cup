@@ -69,6 +69,7 @@ DECLARACION ::= TIPO_DATOS:d IDE:i igual EXPRESION:e {:
             Sintax.sem.verifVariable(d.toString(), i.toString(), e.toString());
         }catch(ErrorSemantica err){
             System.err.println("Error xd: "+ err.getMessage());
+            throw new RuntimeException(err);
         }
     :};
 
@@ -83,13 +84,23 @@ OPERADORES_LOGICOS ::= y {: RESULT= "&"; :}
                   | o {: RESULT= "|"; :}
                   | no {: RESULT= "!"; :};
 
-COMPARACIONES ::= VALORES:n COMPARACIONES_II:cII COMPARACIONES_III:cIII {: RESULT = n.toString()+cII.toString()+cIII.toString(); :}
-                  | parentesisA:pA VALORES:n COMPARACIONES_II:cII COMPARACIONES_III:c parentesisC:pC COMPARACIONES_III:c2 {: RESULT= pA.toString()+n.toString()+cII.toString()+c.toString()+pC.toString()+c2.toString(); :};
+COMPARACIONES ::= VALORES:n COMPARACIONES_II:cII {: RESULT = Sintax.sem.comparacion(n.toString(),cII.toString()); :}
+                  | parentesisA:pA VALORES:n COMPARACIONES_II:cII parentesisC:pC {: 
+                    try{
+                        RESULT= Sintax.sem.comparacion(n.toString(), cII.toString()); 
+                    }catch(ErrorSemantica err){
+                        System.err.println("Error xd: "+ err.getMessage());
+                        throw new RuntimeException(err);
+                    }
+                :};
 
-COMPARACIONES_II ::= COMPARADORES:c VALORES:n {: RESULT= c.toString() + n.toString(); :}
-                  | /**/ {: RESULT= ""; :};
-
-COMPARACIONES_III ::= OPERADORES_LOGICOS:n COMPARACIONES:c {: RESULT= n.toString()+c.toString(); :}
+COMPARACIONES_II ::= COMPARADORES:c VALORES:n {: 
+                    try{
+                        RESULT= Sintax.sem.comparacionII(c.toString(), n.toString()); System.out.println(RESULT);
+                    }catch(ErrorSemantica err){
+                        System.err.println("Error xd: "+ err.getMessage());
+                        throw new RuntimeException(err);
+                    } :}
                   | /**/ {: RESULT= ""; :};
 
 DECISION ::= si:s parentesisA:pA COMPARACIONES:c parentesisC:pC llaveA:lA CODIGO llaveC:lC DECISION_NO 
@@ -103,7 +114,14 @@ MIENTRAS ::= cicloMientras parentesisA COMPARACIONES parentesisC llaveA CODIGO l
 EXPRESION ::= OPERANDO:n {: RESULT= n; :} 
               |finLinea;
 
-OPERANDO ::= VALORES:n OPERACION:o {: RESULT= Sintax.sem.operando(n.toString(), o.toString()); :}
+OPERANDO ::= VALORES:n OPERACION:o {: 
+        try{
+            RESULT= Sintax.sem.operando(n.toString(), o.toString()); 
+        }catch(ErrorSemantica err){
+            System.err.println("Error xd: "+ err.getMessage());
+            throw new RuntimeException(err);
+        }
+:}
             | VALORES:n {: RESULT= n; :};
 
 OPERACION ::= OPERADORES:o EXPRESION:e {: 
@@ -111,6 +129,7 @@ OPERACION ::= OPERADORES:o EXPRESION:e {:
                 RESULT= Sintax.sem.operacion(o.toString(), e.toString());
             }catch(ErrorSemantica err){
                 System.err.println("Error xd: "+ err.getMessage());
+                throw new RuntimeException(err);
             } 
 :};
 
