@@ -3,13 +3,14 @@ package codigo;
 import java_cup.runtime.Symbol;
 
 parser code
-{:
-    // Declaración de precedencias dentro del código del parser
- /*   precedence left suma, resta;
-    precedence left producto, division;
-    precedence left y, o;*/
-
+{:  
+    public String RESULT = "";
+    public static Semantica sem = new Semantica();
     private Symbol s;
+
+    public void setSemantica(Semantica sem) {
+        this.sem = sem;
+    }
     
     public void syntax_error(Symbol s){
         this.s = s;
@@ -20,88 +21,105 @@ parser code
     }
 :};
 
-// Declaración de terminales
-terminal entero, decimal, string, bool,
-    igual, suma, resta, division, producto,
-    menorQue, mayorQue, menorIgual, mayorIgual,
-    y, o, no, igualA, diferenteA, verdadero, falso,
-    finLinea, imprimir, comillaSimple, comillaDoble,
-    parentesisA, parentesisC, llaveA, llaveC, funcMain,
-    si, sino, letra, numero, numeroDecimal, tipoStr, mientras;
+terminal entero, decimal, string, bool, igual, suma, resta, division;
+terminal producto, menorQue, mayorQue, menorIgual, mayorIgual, comillaSimple, punto;
+terminal y, o, no, igualA, diferenteA, verdadero, falso, finLinea, imprimir;
+terminal comillaDoble, parentesisA, parentesisC, llaveA;
+terminal llaveC, funcMain, si, sino, cicloMientras, letra, numero;
+terminal numeroDecimal, tipoStr, coma;
 
-// No terminales
-non terminal INICIO, CODIGO, ID, IMPRIMIR, SENTENCIA, 
-OPERACIONES, OPERANDO, DECISION, SENTENCIA_BOOLEANA,
-MIENTRAS, DATO_NUMERICO, DATO_BOOLEANO;
+non terminal MAIN, CODIGO, IDE, TIPO_NUMERICOS, TIPO_DATOS, VALORES_BOOL;
+non terminal VALORES_NUMERICOS, VALORES, DECLARACION, COMPARADORES, OPERADORES_LOGICOS;
+non terminal COMPARACIONES, COMPARACIONES_II, COMPARACIONES_III, DECISION, DECISION_NO, MIENTRAS;
+non terminal OPERADORES, OPERANDO, OPERACION, EXPRESION, IMPRIMIR, CONTENIDO;
 
-// Punto de partida
-start with INICIO;
+start with MAIN;
 
-// Regla inicial
-INICIO ::= funcMain parentesisA parentesisC llaveA CODIGO llaveC;
+MAIN ::= funcMain parentesisA parentesisC llaveA CODIGO llaveC {: Sintax.sem.vaciarTabla(); :};
 
-// Cuerpo del código
-CODIGO ::= SENTENCIA finLinea CODIGO
-         | IMPRIMIR CODIGO
-         | MIENTRAS CODIGO
-         | DECISION CODIGO
-         | /* vacío */;
+CODIGO ::= DECLARACION CODIGO
+| DECISION CODIGO
+| MIENTRAS CODIGO
+| EXPRESION CODIGO
+| IMPRIMIR CODIGO
+| /**/;
 
-// Tipos
-DATO_NUMERICO ::= numero
-                | numeroDecimal;
-DATO_BOOLEANO ::= verdadero
-               | falso;
+IDE ::= letra:l {: RESULT= l; :};
 
-// ID
-ID ::= letra;
+TIPO_NUMERICOS ::= entero {: RESULT= "entero"; :} 
+              | decimal {: RESULT= "decimal"; :};
 
-// Imprimir
-IMPRIMIR ::= imprimir parentesisA ID parentesisC finLinea
-          | imprimir parentesisA DATO_NUMERICO parentesisC finLinea
-          | imprimir parentesisA tipoStr parentesisC finLinea
-          | imprimir parentesisA OPERACIONES parentesisC finLinea;
+TIPO_DATOS ::= TIPO_NUMERICOS:r {: RESULT= r.toString(); :} 
+              | string {: RESULT= "string"; :}
+              | bool {: RESULT= "bool"; :};
 
-// Definición de sentencias
-SENTENCIA ::= entero ID igual numero
-            | decimal ID igual numeroDecimal
-            | string ID igual tipoStr
-            | bool ID igual DATO_BOOLEANO;
+VALORES_BOOL ::= verdadero {: RESULT = "verdadero"; :} 
+              | falso {: RESULT= "falso"; :};
 
-// Operaciones
-OPERACIONES ::= ID OPERANDO
-              | DATO_NUMERICO OPERANDO
-              | /* na */;
-// Operando
-OPERANDO ::= suma ID OPERANDO
-          | suma DATO_NUMERICO OPERANDO
-          | resta ID OPERANDO
-          | resta DATO_NUMERICO OPERANDO
-          | division ID OPERANDO
-          | division DATO_NUMERICO OPERANDO
-          | producto ID OPERANDO
-          | producto DATO_NUMERICO OPERANDO
-          | suma parentesisA OPERACIONES parentesisC OPERANDO
-          | resta parentesisA OPERACIONES parentesisC OPERANDO
-          | division parentesisA OPERACIONES parentesisC OPERANDO
-          | producto parentesisA OPERACIONES parentesisC OPERANDO
-          | parentesisA OPERACIONES parentesisC OPERANDO
-          | finLinea;
+VALORES_NUMERICOS ::= numeroDecimal:n {: RESULT = n; :} 
+              | numero:n {: RESULT = n; :};
 
-// Decisiones
-DECISION ::= si parentesisA SENTENCIA_BOOLEANA parentesisC llaveA CODIGO llaveC
-          | sino llaveA CODIGO llaveC;
+VALORES ::= VALORES_NUMERICOS:n {: RESULT= n; :} 
+              | tipoStr:n {: RESULT= n; :} 
+              | letra:n {: RESULT=n; :} 
+              | VALORES_BOOL:n {: RESULT=n; :};
 
-// Expresiones booleanas
-SENTENCIA_BOOLEANA ::= DATO_BOOLEANO
-                    | DATO_NUMERICO mayorQue DATO_NUMERICO
-                    | DATO_NUMERICO menorQue DATO_NUMERICO
-                    | DATO_NUMERICO menorIgual DATO_NUMERICO
-                    | DATO_NUMERICO mayorIgual DATO_NUMERICO
-                    | tipoStr igualA tipoStr
-                    | DATO_NUMERICO igualA DATO_NUMERICO
-                    | tipoStr diferenteA tipoStr
-                    | DATO_NUMERICO diferenteA DATO_NUMERICO;
+DECLARACION ::= TIPO_DATOS:d IDE:i igual EXPRESION:e {: 
+        try{
+            Sintax.sem.verifVariable(d.toString(), i.toString(), e.toString());
+        }catch(ErrorSemantica err){
+            System.err.println("Error xd: "+ err.getMessage());
+        }
+    :};
 
-// Ciclos
-MIENTRAS ::= mientras parentesisA SENTENCIA_BOOLEANA parentesisC llaveA CODIGO llaveC;
+COMPARADORES ::= menorQue {: RESULT= "<"; :} 
+              | mayorQue {: RESULT= ">"; :}
+              | menorIgual {: RESULT= "<="; :}
+              | mayorIgual {: RESULT= ">="; :}
+              | igualA {: RESULT= "=="; :}
+              | diferenteA {: RESULT= "!="; :};
+
+OPERADORES_LOGICOS ::= y {: RESULT= "&"; :}
+                  | o {: RESULT= "|"; :}
+                  | no {: RESULT= "!"; :};
+
+COMPARACIONES ::= VALORES:n COMPARACIONES_II:cII COMPARACIONES_III:cIII {: RESULT = n.toString()+cII.toString()+cIII.toString(); :}
+                  | parentesisA:pA VALORES:n COMPARACIONES_II:cII COMPARACIONES_III:c parentesisC:pC COMPARACIONES_III:c2 {: RESULT= pA.toString()+n.toString()+cII.toString()+c.toString()+pC.toString()+c2.toString(); :};
+
+COMPARACIONES_II ::= COMPARADORES:c VALORES:n {: RESULT= c.toString() + n.toString(); :}
+                  | /**/ {: RESULT= ""; :};
+
+COMPARACIONES_III ::= OPERADORES_LOGICOS:n COMPARACIONES:c {: RESULT= n.toString()+c.toString(); :}
+                  | /**/ {: RESULT= ""; :};
+
+DECISION ::= si:s parentesisA:pA COMPARACIONES:c parentesisC:pC llaveA:lA CODIGO llaveC:lC DECISION_NO 
+{: System.out.println(s.toString() + pA.toString() + c.toString() + pC.toString() + lA.toString() + " CODIGO "+lC.toString()); :};
+
+DECISION_NO ::= sino llaveA CODIGO llaveC 
+                  | /**/;
+
+MIENTRAS ::= cicloMientras parentesisA COMPARACIONES parentesisC llaveA CODIGO llaveC;
+
+EXPRESION ::= OPERANDO:n {: RESULT= n; :} 
+              |finLinea;
+
+OPERANDO ::= VALORES:n OPERACION:o {: RESULT= Sintax.sem.operando(n.toString(), o.toString()); :}
+            | VALORES:n {: RESULT= n; :};
+
+OPERACION ::= OPERADORES:o EXPRESION:e {: 
+            try{
+                RESULT= Sintax.sem.operacion(o.toString(), e.toString());
+            }catch(ErrorSemantica err){
+                System.err.println("Error xd: "+ err.getMessage());
+            } 
+:};
+
+OPERADORES ::= suma     {: RESULT= "+"; :}
+             | resta    {: RESULT= "-"; :}
+             | division {: RESULT= "/"; :}
+             | producto {: RESULT= "*"; :};
+
+IMPRIMIR ::= imprimir parentesisA CONTENIDO:c parentesisC finLinea {: System.out.println("La impresión de este print es: "+c); :};
+
+CONTENIDO ::= comillaDoble letra:v comillaDoble {: RESULT= v; :}
+              | EXPRESION:v {: RESULT= v; :};

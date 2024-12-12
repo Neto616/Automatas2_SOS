@@ -42,10 +42,13 @@ public enum Tokens {
     si,
     sino,
     mientras,
+    punto,
+    coma,
+    cicloMientras,
     // Léxico
     letra,
     numero,
     numeroDecimal,
     tipoStr,
-    ERROR
+    error
 }

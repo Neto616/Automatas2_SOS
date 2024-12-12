@@ -1,65 +1,57 @@
 package codigo;
-
 import static codigo.Tokens.*;
-%% 
+%%
 %class Lexer
 %type Tokens
+
+coma = ","
+espacio=[ \t\r]+
 letra=[a-zA-Z_]+
+tipoStr = \"[a-zA-Z0-9 !¡?¿@#\$\(/=\|°]*\"
 numero=[0-9]+
-linea = \n
 numeroDecimal=[0-9]+\.[0-9]+
-tipoStr=\"[a-zA-Z_ ]+\"
-espacio=[ \t\r\n]+
 %{
-    public String lexeme;
+    public String lexer;
 %}
 %%
-
-// Tipo de datos específicos
-(entero) { lexeme = yytext(); return entero; }
-(decimal) { lexeme = yytext(); return decimal; }
-(string) { lexeme = yytext(); return string; }
-(bool) { lexeme = yytext(); return bool; }
- 
-// Signos de operación
-("=") { lexeme = yytext(); return igual; }
-("+") { lexeme = yytext(); return suma; }
-("-") { lexeme = yytext(); return resta; }
-("/") { lexeme = yytext(); return division; }
-("*") { lexeme = yytext(); return producto; }
-
-// Signos de comparación
-("<") { lexeme = yytext(); return menorQue; }
-(">") { lexeme = yytext(); return mayorQue; }
-("<=") { lexeme = yytext(); return menorIgual; }
-(">=") { lexeme = yytext(); return mayorIgual; }
-("&") { lexeme = yytext(); return y; }
-("|") { lexeme = yytext(); return o; }
-("!") { lexeme = yytext(); return no; }
-("==") { lexeme = yytext(); return igualA; }
-("!=") { lexeme = yytext(); return diferenteA; }
-("true") { lexeme = yytext(); return verdadero; }
-("false") { lexeme = yytext(); return falso; }
-
-// Palabras y signos reservados
-(";") { lexeme = yytext(); return finLinea; }
-("print") { lexeme = yytext(); return imprimir; }
-"'" { lexeme = yytext(); return comillaSimple; }
-\" { lexeme = yytext(); return comillaDoble; }
-("(") { lexeme = yytext(); return parentesisA; }
-(")") { lexeme = yytext(); return parentesisC; }
-("{") { lexeme = yytext(); return llaveA; }
-("}") { lexeme = yytext(); return llaveC; }
-("main") { lexeme = yytext(); return funcMain; }
-("si") { lexeme = yytext(); return si; }
-("sino") { lexeme = yytext(); return sino; }
-("mientras") { lexeme = yytext(); return mientras; }
-
-// Léxico general
-{linea} { return linea;}
-{espacio} {/* ignora */}
-{letra} { lexeme = yytext(); return letra; }
-{numero} { lexeme = yytext(); return numero; }
-{numeroDecimal} { lexeme = yytext(); return numeroDecimal; }
-{tipoStr} { lexeme = yytext(); return tipoStr; }
-. { lexeme = yytext(); return ERROR; }
+"entero" {lexer= yytext(); return entero;}
+"decimal" {lexer= yytext(); return decimal;}
+"string" {lexer= yytext(); return string;}
+"buleano" {lexer= yytext(); return bool;}
+{coma} {lexer= yytext(); return coma;}
+"=" {lexer= yytext(); return igual;}
+"+" {lexer= yytext(); return suma;}
+"-" {lexer= yytext(); return resta;}
+"/" {lexer= yytext(); return division;}
+"*" {lexer= yytext(); return producto;}
+"." {lexer= yytext(); return punto;}
+"<" {lexer= yytext(); return menorQue;}
+">" {lexer= yytext(); return mayorQue;}
+"<=" {lexer= yytext(); return menorIgual;}
+">=" {lexer= yytext(); return mayorIgual;}
+"&" {lexer= yytext(); return y;}
+"|" {lexer= yytext(); return o;}
+"!" {lexer= yytext(); return no;}
+"==" {lexer= yytext(); return igualA;}
+"!=" {lexer= yytext(); return diferenteA;}
+"true" {lexer= yytext(); return verdadero;}
+"false" {lexer= yytext(); return falso;}
+";" {lexer= yytext(); return finLinea;}
+"print" {lexer= yytext(); return imprimir;}
+"'" {lexer= yytext(); return comillaSimple;}
+\" {lexer= yytext(); return comillaDoble;}
+"(" {lexer= yytext(); return parentesisA;}
+")" {lexer= yytext(); return parentesisC;}
+"{" {lexer= yytext(); return llaveA;}
+"}" {lexer= yytext(); return llaveC;}
+"main" {lexer= yytext(); return funcMain;}
+"if" {lexer= yytext(); return si;}
+"else" {lexer= yytext(); return sino;}
+"while" {lexer= yytext(); return cicloMientras;}
+"\n" {return linea;}
+{espacio} {/*ignora*/}
+{letra} {lexer= yytext(); return letra;}
+{numero} {lexer= yytext(); return numero;}
+{numeroDecimal} {lexer= yytext(); return numeroDecimal;}
+{tipoStr} {lexer= yytext(); return tipoStr;}
+. {lexer= yytext(); return error;}

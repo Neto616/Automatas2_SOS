@@ -28,9 +28,22 @@ public class SymbolTable {
     public String getSymbolTable() {
         StringBuilder table = new StringBuilder();
         for (Map.Entry<String, Symbol> entry : symbols.entrySet()) {
-            table.append("Nombre: ").append(entry.getKey()).append(", Tipo: ").append(entry.getValue().type).append("\n");
+            table.append("Nombre: ").append(entry.getKey()).append(" | Tipo: ").append(entry.getValue().type).append(" | Valor: ").append(entry.getValue().value).append("\n");
         }
         return table.toString();
+    }
+    
+    public String getSymbolTableFrame() {
+        StringBuilder table = new StringBuilder();
+        for (Map.Entry<String, Symbol> entry : symbols.entrySet()) {
+            table.append("Nombre: ").append(entry.getKey()).append(" | Tipo: ").append(entry.getValue().type).append("\n");
+        }
+        return table.toString();
+    }
+    
+    public void dropTable(){
+        symbols.clear();
+        return;
     }
 
     static class Symbol {

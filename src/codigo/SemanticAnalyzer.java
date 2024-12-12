@@ -108,6 +108,6 @@ public class SemanticAnalyzer {
     }
 
     public String getSymbolTable() {
-        return symbolTable.getSymbolTable();
+        return symbolTable.getSymbolTableFrame();
     }
 }

@@ -41,57 +41,58 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }
 
     private void analizarLexico() throws IOException {
-        int cont = 1;
-        String expr = (String) txtArchivoContenido.getText();
-        Lexer lexer = new Lexer(new StringReader(expr));
-        String resultado = "LINEA " + cont + "\t\tSIMBOLO\n";
-        while (true) {
-            Tokens token = lexer.yylex();
-            if (token == null) {
-                txtAnalizarLex.setText(resultado);
-                jTextAreaTablaSimbolos.setText(semanticAnalyzer.getSymbolTable());
-                return;
-            }
-            semanticAnalyzer.analyzeToken(token, lexer.lexeme);
+    int cont = 1;
+    String expr = (String) txtArchivoContenido.getText();
+    Lexer lexer = new Lexer(new StringReader(expr));
+    String resultado = "LINEA " + cont + "\t\tSIMBOLO\n";
+    while (true) {
+        Tokens token = lexer.yylex();
+        if (token == null) {
+            txtAnalizarLex.setText(resultado);
+            // Mostrar tabla de símbolos después de analizar
+            //jTextAreaTablaSimbolos.setText(semanticAnalyzer.getSymbolTable());
+            return;
+        }
+        semanticAnalyzer.analyzeToken(token, lexer.lexer);
             switch (token) {
                 case linea: cont++; resultado += "LINEA " + cont + "\n"; break;
-                case comillaSimple: resultado += "  <comillaSimple>\t\t" + lexer.lexeme + "\n"; break;
-                case igual: resultado += "  <igual>\t\t" + lexer.lexeme + "\n"; break;
-                case comillaDoble: resultado += "  <comillaDoble>\t\t" + lexer.lexeme + "\n"; break;
-                case string: resultado += "  <String>\t\t" + lexer.lexeme + "\n"; break;
-                case entero: resultado += "  <entero>\t\t" + lexer.lexeme + "\n"; break;
-                case decimal: resultado += "  <decimal>\t\t" + lexer.lexeme + "\n"; break;
-                case bool: resultado += "  <bool>\t\t" + lexer.lexeme + "\n"; break;
-                case si: resultado += "  <si>\t\t" + lexer.lexeme + "\n"; break;
-                case sino: resultado += "  <sino>\t\t" + lexer.lexeme + "\n"; break;
-                case mientras: resultado += " <­mientras>\t\t" + lexer.lexeme + "\n"; break;
-                case suma: resultado += "  <suma>\t\t" + lexer.lexeme + "\n"; break;
-                case resta: resultado += "  <resta>\t\t" + lexer.lexeme + "\n"; break;
-                case producto: resultado += "  <producto>\t\t" + lexer.lexeme + "\n"; break;
-                case division: resultado += "  <division>\t\t" + lexer.lexeme + "\n"; break;
-                case y: resultado += "  <y>\t\t" + lexer.lexeme + "\n"; break;
-                case o: resultado += "  <o>\t\t" + lexer.lexeme + "\n"; break;
-                case no: resultado += "  <no>\t\t" + lexer.lexeme + "\n"; break;
-                case igualA: resultado += "  <igualA>\t\t" + lexer.lexeme + "\n"; break;
-                case diferenteA: resultado += "  <diferenteA>\t\t" + lexer.lexeme + "\n"; break;
-                case verdadero: resultado += "  <verdadero>\t\t" + lexer.lexeme + "\n"; break;
-                case falso: resultado += "  <falso>\t\t" + lexer.lexeme + "\n"; break;
-                case menorQue: resultado += "  <Operador menor que>\t\t" + lexer.lexeme + "\n"; break;
-                case mayorQue: resultado += "  <Operador mayor que>\t\t" + lexer.lexeme + "\n"; break;
-                case menorIgual: resultado += "  <Operador menor que>\t\t" + lexer.lexeme + "\n"; break;
-                case mayorIgual: resultado += "  <Operador mayor igual\t\t" + lexer.lexeme + "\n"; break;
-                case parentesisA: resultado += "  <Parentesis de apertura>\t\t" + lexer.lexeme + "\n"; break;
-                case parentesisC: resultado += "  <Parentesis de cierre>\t\t" + lexer.lexeme + "\n"; break;
-                case llaveA: resultado += "  <Llave de apertura>\t\t" + lexer.lexeme + "\n"; break;
-                case llaveC: resultado += "  <Llave de cierre>\t\t" + lexer.lexeme + "\n"; break;
-                case funcMain: resultado += "  <Reservada main>\t\t" + lexer.lexeme + "\n"; break;
-                case finLinea: resultado += "  <Punto y coma>\t\t" + lexer.lexeme + "\n"; break;
-                case letra: resultado += "  <letra>\t\t" + lexer.lexeme + "\n"; break;
-                case numero: resultado += "  <Numero>\t\t" + lexer.lexeme + "\n"; break;
-                case numeroDecimal: resultado += "<Numero decimal>\t\t" + lexer.lexeme + "\n"; break;
-                case tipoStr: resultado += "<Tipo string>\t\t" + lexer.lexeme + "\n"; break;
-                case imprimir: resultado += "  <imprimir>\t\t" + lexer.lexeme + "\n"; break;
-                default: resultado += "  < " + lexer.lexeme + " >\n"; break;
+                case comillaSimple: resultado += "  <comillaSimple>\t\t" + lexer.lexer + "\n"; break;
+                case igual: resultado += "  <igual>\t\t" + lexer.lexer + "\n"; break;
+                case comillaDoble: resultado += "  <comillaDoble>\t\t" + lexer.lexer + "\n"; break;
+                case string: resultado += "  <String>\t\t" + lexer.lexer + "\n"; break;
+                case entero: resultado += "  <entero>\t\t" + lexer.lexer + "\n"; break;
+                case decimal: resultado += "  <decimal>\t\t" + lexer.lexer + "\n"; break;
+                case bool: resultado += "  <bool>\t\t" + lexer.lexer + "\n"; break;
+                case si: resultado += "  <si>\t\t" + lexer.lexer + "\n"; break;
+                case sino: resultado += "  <sino>\t\t" + lexer.lexer + "\n"; break;
+                case mientras: resultado += " <­mientras>\t\t" + lexer.lexer + "\n"; break;
+                case suma: resultado += "  <suma>\t\t" + lexer.lexer + "\n"; break;
+                case resta: resultado += "  <resta>\t\t" + lexer.lexer + "\n"; break;
+                case producto: resultado += "  <producto>\t\t" + lexer.lexer + "\n"; break;
+                case division: resultado += "  <division>\t\t" + lexer.lexer + "\n"; break;
+                case y: resultado += "  <y>\t\t" + lexer.lexer + "\n"; break;
+                case o: resultado += "  <o>\t\t" + lexer.lexer + "\n"; break;
+                case no: resultado += "  <no>\t\t" + lexer.lexer + "\n"; break;
+                case igualA: resultado += "  <igualA>\t\t" + lexer.lexer + "\n"; break;
+                case diferenteA: resultado += "  <diferenteA>\t\t" + lexer.lexer + "\n"; break;
+                case verdadero: resultado += "  <verdadero>\t\t" + lexer.lexer + "\n"; break;
+                case falso: resultado += "  <falso>\t\t" + lexer.lexer + "\n"; break;
+                case menorQue: resultado += "  <Operador menor que>\t\t" + lexer.lexer + "\n"; break;
+                case mayorQue: resultado += "  <Operador mayor que>\t\t" + lexer.lexer + "\n"; break;
+                case menorIgual: resultado += "  <Operador menor que>\t\t" + lexer.lexer + "\n"; break;
+                case mayorIgual: resultado += "  <Operador mayor igual\t\t" + lexer.lexer + "\n"; break;
+                case parentesisA: resultado += "  <Parentesis de apertura>\t\t" + lexer.lexer + "\n"; break;
+                case parentesisC: resultado += "  <Parentesis de cierre>\t\t" + lexer.lexer + "\n"; break;
+                case llaveA: resultado += "  <Llave de apertura>\t\t" + lexer.lexer + "\n"; break;
+                case llaveC: resultado += "  <Llave de cierre>\t\t" + lexer.lexer + "\n"; break;
+                case funcMain: resultado += "  <Reservada main>\t\t" + lexer.lexer + "\n"; break;
+                case finLinea: resultado += "  <Punto y coma>\t\t" + lexer.lexer + "\n"; break;
+                case letra: resultado += "  <letra>\t\t" + lexer.lexer + "\n"; break;
+                case numero: resultado += "  <Numero>\t\t" + lexer.lexer + "\n"; break;
+                case numeroDecimal: resultado += "<Numero decimal>\t\t" + lexer.lexer + "\n"; break;
+                case tipoStr: resultado += "<Tipo string>\t\t" + lexer.lexer + "\n"; break;
+                case imprimir: resultado += "  <imprimir>\t\t" + lexer.lexer + "\n"; break;
+                default: resultado += "  < " + lexer.lexer + " >\n"; break;
             }
         }
     }
@@ -252,7 +253,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     private void btnAnalizarLexActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizarLexActionPerformed
         try {
             analizarLexico();
-            jTextAreaTablaSimbolos.setText(semanticAnalyzer.getSymbolTable());
+            //jTextAreaTablaSimbolos.setText(semanticAnalyzer.getSymbolTable());
         } catch (IOException ex) {
             Logger.getLogger(FrmPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -279,18 +280,16 @@ public class FrmPrincipal extends javax.swing.JFrame {
         String ST = txtArchivoContenido.getText();
         LexerCup lexerCup = new codigo.LexerCup(new StringReader(ST));
         Sintax s = new Sintax(lexerCup);
-        semanticAnalyzer = new SemanticAnalyzer(); // Reiniciar el analizador semántico 
         try {
-            s.parse();
-            if (semanticAnalyzer.hasErrors()) {
-                txtAnalizarSin.setText("Errores semánticos encontrados:\n" + semanticAnalyzer.getErrors());
-            } else {
-                txtAnalizarSin.setText("Análisis sintáctico y semántico correcto");
-                jTextAreaTablaSimbolos.setText(semanticAnalyzer.getSymbolTable());
-            }
+            s.parse();    
+            txtAnalizarSin.setText("Análisis sintáctico y semántico correcto");
+            jTextAreaTablaSimbolos.setText(semanticAnalyzer.getSymbolTable());
+           semanticAnalyzer = new SemanticAnalyzer(); // Reiniciar el analizador semántico 
+            
         } catch (Exception ex) {
             Symbol sym = s.getS();
-            txtAnalizarSin.setText("Error de sintaxis. Línea: " + (sym.right + 1) + " columna: " + (sym.left + 1) + " , Texto: \"" + sym.value + "\"");
+//            semanticAnalyzer = new SemanticAnalyzer();
+//            txtAnalizarSin.setText("Error de sintaxis. Línea: " + (sym.right + 1) + " columna: " + (sym.left + 1) + " , Texto: \"" + sym.value + "\"");
         }
     }//GEN-LAST:event_btnAnalizarSinActionPerformed
 
